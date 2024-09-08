@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="container mt-4">
+        <br>
+        <h1>Welcome, {{ username }}!</h1>
+        
+    </div>
+    <!-- Enrollment Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Enroll in a Course</h5>
+            <form action="{{ url_for('dashboard', username=username) }}" method="post">
+                <div class="mb-3">
+                    <label for="course_id" class="form-label">Enter Course ID:</label>
+                    <input type="text" class="form-control" id="course_id" name="course_id" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enroll</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Available Courses Section -->
+    <h3 class="mb-4">Available Courses</h3>
+    <div class="row">
+        {% for course, instructor, department in courses %}
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.Course_Name }}</h5>
+                        <p class="card-text">Course ID: {{ course.Course_ID }}</p>
+                        <p class="card-text">Instructor Name: {{ instructor.Instructor_Name }}</p>
+                        <p class="card-text">Department: {{ department.Department_Name }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Enrolled Courses Section -->
+    <h3 class="mt-5 mb-4">Your Enrolled Courses</h3>
+    <div class="row">
+        {% for course, enrollment in enrolled_courses %}
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.Course_Name }}</h5>
+                    <p class="card-text">Course ID: {{ course.Course_ID }}</p>
+                    <p class="card-text">Instructor Name: {{ course.instructor.Instructor_Name }}</p>
+                    <p class="card-text">Department: {{ course.department.Department_Name }}</p>
+
+                    <!-- Dropdown for additional enrollment details -->
+                    <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#enrollmentDetails{{ enrollment.Enrollment_ID }}" aria-expanded="false" aria-controls="enrollmentDetails{{ enrollment.Enrollment_ID }}">
+                        View Enrollment Details
+                    </button>
+                    <div class="collapse" id="enrollmentDetails{{ enrollment.Enrollment_ID }}">
+                        <ul class="list-group mt-3">
+                            <li class="list-group-item">Enrollment ID: {{ enrollment.Enrollment_ID }}</li>
+                            <li class="list-group-item">Mid-Sem Score: {{ enrollment.Mid_Sem_Score }}</li>
+                            <li class="list-group-item">End-Sem Score: {{ enrollment.End_Sem_Score }}</li>
+                            <li class="list-group-item">Mid-Sem Date: {{ course.Mid_Sem_Date }}</li>
+                            <li class="list-group-item">End-Sem Date: {{ course.End_Sem_Date }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
