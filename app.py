@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session,jsonify
 from database import engine
 from sqlalchemy import text
-from database import insert_user_data,verify_user_data,insert_course,Instructor,fetch_courses,fetch_courses_student,fetch_enrolled_courses,new_enroll
+from database import insert_user_data,verify_user_data,insert_course,Instructor,fetch_courses,fetch_courses_student,fetch_enrolled_courses,new_enroll,fetch_courses_for_instructor
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Needed for session management
@@ -84,7 +84,11 @@ def dashboard(username):
         if role == 'Admin':
             return render_template('admin_dashboard.html', username=username, instructors=instructors,courses=courses)
         elif role == 'Instructor':
-            return render_template('instructor_dashboard.html', username=username)
+            with engine.connect() as connection:
+                instructor=connection.execute(text("select Instructor_ID from Users where Username=:username"),{'username':username}).first()
+                instructor_id=instructor.Instructor_ID
+                courses=fetch_courses_for_instructor(instructor_id)
+                return render_template('instructor_dashboard.html', username=username,courses=courses)
         elif role == 'Student':
             with engine.connect() as connection:
                 student=connection.execute(text("SELECT * FROM Students WHERE Student_ID= (SELECT Student_ID from Users where Username=:username)"),{'username':username}).first()
@@ -102,6 +106,19 @@ def dashboard(username):
 def logout():
     session.pop('username', None)  # Clear the session
     return redirect(url_for('login'))
+
+@app.route('/students_in_course/<course_id>')
+def students_in_course(course_id):
+    with engine.connect() as connection:
+        # Fetch students enrolled in the specified course
+        students = connection.execute(text("""
+            SELECT Students.Student_ID, Students.Student_Name
+            FROM Enrollments
+            JOIN Students ON Enrollments.Student_ID = Students.Student_ID
+            WHERE Enrollments.Course_ID = :course_id
+        """), {'course_id': course_id}).fetchall()
+        
+    return render_template('students_in_course.html', course_id=course_id, students=students)
 
 if __name__ == '__main__':
     app.run(debug=True ,host='0.0.0.0')

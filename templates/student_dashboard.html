@@ -1,37 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="container mt-4">
-        <br>
-        <h1>Welcome, {{ username }}!</h1>
-        
+<div class="container mt-5 ">
+    <div class="container mt-4  border-dark">
+        <h1 class="text-dark">Welcome, {{ username }}!</h1>
     </div>
     <!-- Enrollment Form -->
-    <div class="card mb-4">
+    <div class="card mb-4 border-dark ">
         <div class="card-body">
-            <h5 class="card-title">Enroll in a Course</h5>
+            <h5 class="card-title text-dark">Enroll in a Course</h5>
             <form action="{{ url_for('dashboard', username=username) }}" method="post">
                 <div class="mb-3">
-                    <label for="course_id" class="form-label">Enter Course ID:</label>
-                    <input type="text" class="form-control" id="course_id" name="course_id" required>
+                    <label for="course_id" class="form-label text-dark">Enter Course ID:</label>
+                    <input type="text" class="form-control  text-dark border-dark" id="course_id" name="course_id" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Enroll</button>
+                <button type="submit" class="btn btn-light">Enroll</button>
             </form>
         </div>
     </div>
 
     <!-- Available Courses Section -->
-    <h3 class="mb-4">Available Courses</h3>
-    <div class="row">
+    <h3 class="mb-4 text-dark border-dark">Available Courses</h3>
+    <div class="row ">
         {% for course, instructor, department in courses %}
             <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm border-dark bg-white text-dark">
                     <div class="card-body">
                         <h5 class="card-title">{{ course.Course_Name }}</h5>
-                        <p class="card-text">Course ID: {{ course.Course_ID }}</p>
-                        <p class="card-text">Instructor Name: {{ instructor.Instructor_Name }}</p>
-                        <p class="card-text">Department: {{ department.Department_Name }}</p>
+                        <p class="card-text">Course ID: <span class="text-dark">{{ course.Course_ID }}</span></p>
+                        <p class="card-text">Instructor Name: <span class="text-dark">{{ instructor.Instructor_Name }}</span></p>
+                        <p class="card-text">Department: <span class="text-dark">{{ department.Department_Name }}</span></p>
                     </div>
                 </div>
             </div>
@@ -39,28 +37,28 @@
     </div>
 
     <!-- Enrolled Courses Section -->
-    <h3 class="mt-5 mb-4">Your Enrolled Courses</h3>
+    <h3 class="mt-5 mb-4 text-dark">Your Enrolled Courses</h3>
     <div class="row">
         {% for course, enrollment in enrolled_courses %}
         <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-dark bg-white text-dark">
                 <div class="card-body">
                     <h5 class="card-title">{{ course.Course_Name }}</h5>
-                    <p class="card-text">Course ID: {{ course.Course_ID }}</p>
-                    <p class="card-text">Instructor Name: {{ course.instructor.Instructor_Name }}</p>
-                    <p class="card-text">Department: {{ course.department.Department_Name }}</p>
+                    <p class="card-text">Course ID: <span class="text-dark">{{ course.Course_ID }}</span></p>
+                    <p class="card-text">Instructor Name: <span class="text-dark">{{ course.instructor.Instructor_Name }}</span></p>
+                    <p class="card-text">Department: <span class="text-dark">{{ course.department.Department_Name }}</span></p>
 
                     <!-- Dropdown for additional enrollment details -->
-                    <button class="btn btn-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#enrollmentDetails{{ enrollment.Enrollment_ID }}" aria-expanded="false" aria-controls="enrollmentDetails{{ enrollment.Enrollment_ID }}">
+                    <button class="btn btn-light mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#enrollmentDetails{{ enrollment.Enrollment_ID }}" aria-expanded="false" aria-controls="enrollmentDetails{{ enrollment.Enrollment_ID }}">
                         View Enrollment Details
                     </button>
                     <div class="collapse" id="enrollmentDetails{{ enrollment.Enrollment_ID }}">
-                        <ul class="list-group mt-3">
-                            <li class="list-group-item">Enrollment ID: {{ enrollment.Enrollment_ID }}</li>
-                            <li class="list-group-item">Mid-Sem Score: {{ enrollment.Mid_Sem_Score }}</li>
-                            <li class="list-group-item">End-Sem Score: {{ enrollment.End_Sem_Score }}</li>
-                            <li class="list-group-item">Mid-Sem Date: {{ course.Mid_Sem_Date }}</li>
-                            <li class="list-group-item">End-Sem Date: {{ course.End_Sem_Date }}</li>
+                        <ul class="list-group mt-3 bg-white text-dark border-dark">
+                            <li class="list-group-item bg-white text-dark border-dark">Enrollment ID: {{ enrollment.Enrollment_ID }}</li>
+                            <li class="list-group-item bg-white text-dark border-dark">Mid-Sem Score: {{ enrollment.Mid_Sem_Score }}</li>
+                            <li class="list-group-item bg-white text-dark border-dark">End-Sem Score: {{ enrollment.End_Sem_Score }}</li>
+                            <li class="list-group-item bg-white text-dark border-dark">Mid-Sem Date: {{ course.Mid_Sem_Date }}</li>
+                            <li class="list-group-item bg-white text-dark border-dark">End-Sem Date: {{ course.End_Sem_Date }}</li>
                         </ul>
                     </div>
                 </div>

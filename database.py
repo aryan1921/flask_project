@@ -216,3 +216,11 @@ def new_enroll(student_id,course_id):
     new_enrollment = Enrollment(Student_ID=student_id, Course_ID=course_id)
     session.add(new_enrollment)
     session.commit()
+    
+def fetch_courses_for_instructor(instructor_id):
+    with engine.connect() as connection:
+        result = connection.execute(text("""
+            SELECT * FROM Courses
+            WHERE Instructor_ID = :instructor_id
+        """), {'instructor_id': instructor_id}).fetchall()
+    return result
