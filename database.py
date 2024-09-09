@@ -5,7 +5,7 @@ from flask import render_template
 
 Base = declarative_base()
 
-# Define the User class
+#  User class
 class User(Base):
     __tablename__ = 'Users'
 
@@ -23,7 +23,7 @@ class User(Base):
     def __repr__(self):
         return f"<User(Username='{self.Username}', Role='{self.Role}')>"
 
-# Define the Admin class
+#  Admin class
 class Admin(Base):
     __tablename__ = 'Admins'
 
@@ -36,7 +36,7 @@ class Admin(Base):
     def __repr__(self):
         return f"<Admin(Admin_ID={self.Admin_ID}, Name='{self.Name}', Email='{self.Email}')>"
 
-# Define the Instructor class
+#  Instructor class
 class Instructor(Base):
     __tablename__ = 'Instructors'
 
@@ -51,7 +51,7 @@ class Instructor(Base):
     def __repr__(self):
         return f"<Instructor(Instructor_ID={self.Instructor_ID}, Name='{self.Instructor_Name}', Email='{self.Email}')>"
 
-# Define the Student class
+#  Student class
 class Student(Base):
     __tablename__ = 'Students'
 
@@ -64,7 +64,7 @@ class Student(Base):
     def __repr__(self):
         return f"<Student(Student_ID={self.Student_ID}, Student_Name='{self.Student_Name}', Email='{self.Email}')>"
 
-# Define the Department class
+# Department class
 class Department(Base):
     __tablename__ = 'Departments'
 
@@ -78,7 +78,7 @@ class Department(Base):
     def __repr__(self):
         return f"<Department(Department_ID={self.Department_ID}, Department_Name='{self.Department_Name}', Head_Instructor_ID={self.Head_Instructor_ID})>"
 
-# Define the Course class
+#  Course class
 class Course(Base):
     __tablename__ = 'Courses'
 
@@ -110,13 +110,13 @@ class Enrollment(Base):
     # Relationships
     student = relationship("Student", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
-# Create an engine
+# engine
 connection_string = (
     "mysql+pymysql://avnadmin:AVNS_e9IwZTydArVfDGHXZxP@flask-database-flask-database.h.aivencloud.com:22801/defaultdb?charset=utf8mb4"
 )
 engine = create_engine(connection_string)
 
-# Create a session factory
+
 Session = sessionmaker(bind=engine)
 session = Session()
 

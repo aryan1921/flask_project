@@ -4,9 +4,9 @@ from sqlalchemy import text
 from database import insert_user_data,verify_user_data,insert_course,Instructor,fetch_courses,fetch_courses_student,fetch_enrolled_courses,new_enroll,fetch_courses_for_instructor
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for session management
+app.secret_key = 'your_secret_key'  
 
-# Mock database: In a real application, replace this with actual database logic
+
 
 
 @app.route('/')
@@ -16,7 +16,7 @@ def home():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        # Retrieve form data and convert it to a dictionary
+        
         user_data = {
             'name': request.form.get('name'),
             'email': request.form.get('email'),
@@ -24,7 +24,7 @@ def signup():
             'password': request.form.get('password'),
             'role': request.form.get('role')
         }
-        # Call the custom function to insert data into the database
+        
         insert_user_data(user_data)
         return redirect(url_for('home'))
     return render_template('signup.html')
@@ -53,9 +53,9 @@ def dashboard(username):
             role = connection.execute(text("SELECT Role FROM Users WHERE Username = :username"), {'username': username}).scalar()
         if role is None:
             return "Role not found in session", 403
-        # Rest of the dashboard logic
         
-        # Fetch all instructors
+        
+        
         with engine.connect() as connection:
             instructors = connection.execute(text("SELECT * FROM Instructors")).fetchall()
             courses=fetch_courses()
@@ -104,21 +104,47 @@ def dashboard(username):
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)  # Clear the session
+    session.pop('username', None)  
     return redirect(url_for('login'))
 
 @app.route('/students_in_course/<course_id>')
 def students_in_course(course_id):
     with engine.connect() as connection:
-        # Fetch students enrolled in the specified course
+        
         students = connection.execute(text("""
-            SELECT Students.Student_ID, Students.Student_Name
+            SELECT Students.Student_ID, Students.Student_Name, Enrollments.Mid_Sem_Score, Enrollments.End_Sem_Score
             FROM Enrollments
             JOIN Students ON Enrollments.Student_ID = Students.Student_ID
             WHERE Enrollments.Course_ID = :course_id
         """), {'course_id': course_id}).fetchall()
         
     return render_template('students_in_course.html', course_id=course_id, students=students)
+@app.route('/update_marks/<int:course_id>/<int:student_id>', methods=['POST'])
+def update_marks(course_id, student_id):
+    mid_sem_score = request.form.get('mid_sem_score')
+    end_sem_score = request.form.get('end_sem_score')
+
+    try:
+        with engine.begin() as connection: 
+            result = connection.execute(
+                text("UPDATE Enrollments SET Mid_Sem_Score = :mid_sem_score, End_Sem_Score = :end_sem_score "
+                     "WHERE Course_ID = :course_id AND Student_ID = :student_id"),
+                {
+                    'mid_sem_score': mid_sem_score,
+                    'end_sem_score': end_sem_score,
+                    'course_id': course_id,
+                    'student_id': student_id
+                }
+            )
+
+            
+            print(f"Rows affected: {result.rowcount}")
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return "An error occurred while updating marks.", 500
+
+    return redirect(url_for('students_in_course', course_id=course_id))
 
 if __name__ == '__main__':
     app.run(debug=True ,host='0.0.0.0')
